@@ -1,4 +1,4 @@
-# How to add this report on your local machine
+# How to add this repo on your local machine
 
 
 #### Initialize a local Git repository

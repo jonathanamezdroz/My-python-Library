@@ -8,6 +8,8 @@
 import json
 import pandas as pd
 import socket
+import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider
 
 
 #--------------------------Simple functions------------------------------#
@@ -39,6 +41,52 @@ def dt_to_ts(df, offset) :
 #--------------------------UDP functions---------------------------------#
 #                                                                        #
 #------------------------------------------------------------------------#
+
+
+#--------------------------Plot functions--------------------------------#
+#                                                                        #
+#------------------------------------------------------------------------#
+def CursorPlot(x, y, title="", xlabel="", ylabel="", cursor = True) :
+    '''
+    Plot a function with an interactive cursor
+    Input  : 
+
+    Output : 
+    '''
+
+    fig, ax = plt.subplots(figsize=(10, 7))
+    ax.plot(x, y)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.grid(True)
+    
+    if cursor:
+        # Define the range for the x-slider
+        x_min = min(x)
+        x_max = max(x)
+        ax_slider_start = plt.axes([0.1, 0.03, 0.8, 0.03]) #[left, bottom, width, height]
+        ax_slider_end = plt.axes([0.1, 0.01, 0.8, 0.03]) #[left, bottom, width, height]
+        
+        # Create the sliders
+        slider_start = Slider(ax_slider_start, 'Start', x_min, x_max, valinit=x_min)
+        slider_end = Slider(ax_slider_end, 'End', x_min, x_max, valinit=x_max)
+        
+        # Define function to update plot with new x-range
+        def update(val):
+            x_range_start = slider_start.val
+            x_range_end = slider_end.val
+            ax.set_xlim(x_range_start, x_range_end)
+            plt.draw()
+        
+        # Connect the update function to the sliders
+        slider_start.on_changed(update)
+        slider_end.on_changed(update)
+
+    plt.show()
+
+
+
 
 
 
