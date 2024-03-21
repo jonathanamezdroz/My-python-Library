@@ -10,6 +10,7 @@ import pandas as pd
 import socket
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider
+import numpy as np
 
 
 #--------------------------Simple functions------------------------------#
@@ -26,14 +27,14 @@ def substract(a,b) :
 #--------------------------datetime functions----------------------------#
 #                                                                        #
 #------------------------------------------------------------------------#
-def dt_to_ts(df, offset) :
+def dt_to_ts(df, timestring='timestamp', offset=0) :
     '''
     Convert a datetime dataframe to a timestamp dataframe
     Input : df, dataframe
           : offset, offset to add to the timestamp
     Output : df, dataframe with the timestamp
     '''
-    df['ts'] = df.apply(lambda x: (x[0]).timestamp(), axis=1) + offset
+    df['ts'] = df[[timestring]].apply(lambda x: (x[0]).timestamp(), axis=1).astype(int) + offset
 
     return df
 
@@ -46,12 +47,38 @@ def dt_to_ts(df, offset) :
 #--------------------------Plot functions--------------------------------#
 #                                                                        #
 #------------------------------------------------------------------------#
+def multiPlot(x, y, title="", xlabel="", ylabel="", time_format ='ts') :
+    '''
+    Plot n functions on the same plot
+
+    '''
+    if time_format == 'hms':
+        x = pd.to_datetime(x, unit='s').dt.strftime('%H:%M:%S')
+
+    fig, ax = plt.subplots(figsize=(10, 7))
+    fig.suptitle(title)
+
+    n = np.shape(y)[0]
+    ax.set_xlabel(xlabel)
+    ax.grid(True)
+    ax.xaxis.set_tick_params(rotation=45)
+    ax.xaxis.set_ticks(range(0, len(x), 100))
+
+    for i in range(n):
+        ax.plot(x, y[i])
+
+    ax.legend(ylabel)
+
+    
+    plt.show()
+
 def CursorPlot(x, y, title="", xlabel="", ylabel="", cursor = True) :
     '''
-    Plot a function with an interactive cursor
-    Input  : 
+    Plot a function with an interactive cursor. This does
+    not work with a datetime x-axis
+    Input  : x, x values and labels
 
-    Output : 
+    Output : Display the plot
     '''
 
     fig, ax = plt.subplots(figsize=(10, 7))
@@ -68,6 +95,7 @@ def CursorPlot(x, y, title="", xlabel="", ylabel="", cursor = True) :
         ax_slider_start = plt.axes([0.1, 0.03, 0.8, 0.03]) #[left, bottom, width, height]
         ax_slider_end = plt.axes([0.1, 0.01, 0.8, 0.03]) #[left, bottom, width, height]
         
+
         # Create the sliders
         slider_start = Slider(ax_slider_start, 'Start', x_min, x_max, valinit=x_min)
         slider_end = Slider(ax_slider_end, 'End', x_min, x_max, valinit=x_max)
