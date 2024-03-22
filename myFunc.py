@@ -48,14 +48,15 @@ def dt_to_ts(df, timestring='timestamp', offset=0) :
 #--------------------------Plot functions--------------------------------#
 #                                                                        #
 #------------------------------------------------------------------------#
-def multiPlot(x, y, title="", xlabel="", ylabel="", time_format ='ts') :
+def multiPlot(x, y, title="", xlabel="", ylabel="", ylgd = "", time_format ='ts') :
     '''
     Plot multiple array of y values on the same plot
 
     Input : x, timestamp in seconds
           : y, Array of multiple y datas  
           : xlabel, label of the x axis
-          : ylabel, label of the y axis in an array
+          : ylabel, label of the y axis
+          : ylgd, legend of the y values
           : title, title of the plot
           : time_format, format of the x axis (ts or hms(hour min second))
 
@@ -74,14 +75,47 @@ def multiPlot(x, y, title="", xlabel="", ylabel="", time_format ='ts') :
         [n,l] = np.shape(y)
     except:
         n = 1
-        print('A')
+
+
+    
+    if n > 1:
+        for i in range(n): #Plot the multiple plots
+            ax.plot(x,y[i])
+    else:
+        ax.plot(x,y)
 
     #Visual settings
     ax.set_xlabel(xlabel)
     ax.set_title(title)
     ax.xaxis.set_tick_params(rotation=30)
     ax.grid(True) 
-    
+    ax.legend(ylgd)#Add legends after plots
+
+    plt.show()
+
+
+
+
+
+def CursorPlot(x, y, title="", xlabel="", ylabel="", ylgd="", cursor = True) :
+    '''
+    Plot a function with an interactive cursor. This does
+    not work with a datetime x-axis
+    Input  : x, x values 
+           : y, y values
+           : title, title of the plot
+           : xlabel, label of the x axis
+           : ylabel, labels of the y axis
+           : cursor, boolean to activate the cursor
+    Output : Display the plot
+    '''
+
+    fig, ax = plt.subplots(figsize=(10, 7))
+
+    try : 
+        [n,l] = np.shape(y)
+    except:
+        n = 1
 
     if n > 1:
         for i in range(n): #Plot the multiple plots
@@ -89,28 +123,10 @@ def multiPlot(x, y, title="", xlabel="", ylabel="", time_format ='ts') :
     else:
         ax.plot(x,y)
 
-    ax.legend(ylabel)#Add legends after plots
-    plt.show()
-
-    return fig, ax
-
-
-
-
-def CursorPlot(x, y, title="", xlabel="", ylabel="", cursor = True) :
-    '''
-    Plot a function with an interactive cursor. This does
-    not work with a datetime x-axis
-    Input  : x, x values and labels
-
-    Output : Display the plot
-    '''
-
-    fig, ax = plt.subplots(figsize=(10, 7))
-    ax.plot(x, y)
     ax.set_title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
+    ax.legend(ylgd)
     ax.grid(True)
     
     if cursor:
@@ -137,10 +153,6 @@ def CursorPlot(x, y, title="", xlabel="", ylabel="", cursor = True) :
         slider_end.on_changed(update)
 
     plt.show()
-
-
-
-
 
 
 
