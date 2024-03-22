@@ -9,6 +9,7 @@ import json
 import pandas as pd
 import socket
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from matplotlib.widgets import Slider
 import numpy as np
 
@@ -49,28 +50,52 @@ def dt_to_ts(df, timestring='timestamp', offset=0) :
 #------------------------------------------------------------------------#
 def multiPlot(x, y, title="", xlabel="", ylabel="", time_format ='ts') :
     '''
-    Plot n functions on the same plot
+    Plot multiple array of y values on the same plot
+
+    Input : x, timestamp in seconds
+          : y, Array of multiple y datas  
+          : xlabel, label of the x axis
+          : ylabel, label of the y axis in an array
+          : title, title of the plot
+          : time_format, format of the x axis (ts or hms(hour min second))
+
 
     '''
-    if time_format == 'hms':
+
+    fig, ax = plt.subplots(figsize=(10, 7)) #Create figure of given size
+
+    if time_format == 'hms': 
+        #Transform the timestamp in a string of datetime
         x = pd.to_datetime(x, unit='s').dt.strftime('%H:%M:%S')
-
-    fig, ax = plt.subplots(figsize=(10, 7))
-    fig.suptitle(title)
-
-    n = np.shape(y)[0]
-    ax.set_xlabel(xlabel)
-    ax.grid(True)
-    ax.xaxis.set_tick_params(rotation=45)
-    ax.xaxis.set_ticks(range(0, len(x), 100))
-
-    for i in range(n):
-        ax.plot(x, y[i])
-
-    ax.legend(ylabel)
-
+        #Auto-set the x axis to match string datetime values
+        ax.xaxis.set_major_locator(mdates.AutoDateLocator()) 
     
+    try : 
+        [n,l] = np.shape(y)
+    except:
+        n = 1
+        print('A')
+
+    #Visual settings
+    ax.set_xlabel(xlabel)
+    ax.set_title(title)
+    ax.xaxis.set_tick_params(rotation=30)
+    ax.grid(True) 
+    
+
+    if n > 1:
+        for i in range(n): #Plot the multiple plots
+            ax.plot(x,y[i])
+    else:
+        ax.plot(x,y)
+
+    ax.legend(ylabel)#Add legends after plots
     plt.show()
+
+    return fig, ax
+
+
+
 
 def CursorPlot(x, y, title="", xlabel="", ylabel="", cursor = True) :
     '''
@@ -80,13 +105,14 @@ def CursorPlot(x, y, title="", xlabel="", ylabel="", cursor = True) :
 
     Output : Display the plot
     '''
+    fig, ax = multiPlot(x, y, title, xlabel, ylabel)
 
-    fig, ax = plt.subplots(figsize=(10, 7))
-    ax.plot(x, y)
-    ax.set_title(title)
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.grid(True)
+    #fig, ax = plt.subplots(figsize=(10, 7))
+    #ax.plot(x, y)
+    #ax.set_title(title)
+    #ax.set_xlabel(xlabel)
+    #ax.set_ylabel(ylabel)
+    #ax.grid(True)
     
     if cursor:
         # Define the range for the x-slider
