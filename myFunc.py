@@ -105,14 +105,13 @@ def CursorPlot(x, y, title="", xlabel="", ylabel="", cursor = True) :
 
     Output : Display the plot
     '''
-    fig, ax = multiPlot(x, y, title, xlabel, ylabel)
 
-    #fig, ax = plt.subplots(figsize=(10, 7))
-    #ax.plot(x, y)
-    #ax.set_title(title)
-    #ax.set_xlabel(xlabel)
-    #ax.set_ylabel(ylabel)
-    #ax.grid(True)
+    fig, ax = plt.subplots(figsize=(10, 7))
+    ax.plot(x, y)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.grid(True)
     
     if cursor:
         # Define the range for the x-slider
